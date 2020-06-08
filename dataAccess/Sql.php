@@ -1,7 +1,6 @@
 <?php
 class Sql{
 
-	
 	//RECEBE A STRING DE CONEXÃO E OS PARAMETROS
 	public function query($rowQuery , $params = array()){
 		$stmt = Conexao::getInstance()->prepare($rowQuery);
@@ -26,7 +25,7 @@ class Sql{
 	public function select($rowQuery , $parameters = array()){
 		$stmt = $this->query($rowQuery , $parameters);
 		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return json_encode($result);
+		return $result;
 	}
 
 

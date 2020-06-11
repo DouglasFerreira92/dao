@@ -6,11 +6,12 @@ class Usuario{
 	private $dessenha;
 	private $dtcastro;
 
+	//MÉTODO CONSTRUTOR
 	public function __construct($login = "" , $pass = ""){
 		$this->setLogin($login);
 		$this->setSenha($pass);
 	}
-
+	//RETONA JSON QUANDO EXIBIR OBJETO
 	public function __toString(){
 
 		return json_encode(array(
@@ -21,14 +22,14 @@ class Usuario{
 		));
 
 	}
-
+	//SETA OS DADOS NOS ATRIBUTOS DA CLASSE
 	public function setData($data){
 		$this->setId($data['id_user']);
 		$this->setLogin($data['deslogin']);
 		$this->setSenha($data['dessenha']);
 		$this->setDate(new DateTime($data['dtcastro']));
 	}
-
+	//CARREGA PELO ID
 	public function loadById($id){
 
 		$sql = new Sql();
@@ -38,18 +39,18 @@ class Usuario{
 			$this->setData($result[0]);
 		}
 	}
-
+	//SELECIONA TUDO DA TABELA
 	public static function getList(){
 		$sql = new Sql();
 		return $result = $sql->select("SELECT * FROM tb_usuario ORDER BY deslogin");
 	}
-
+	//SELECIONA PELO LOGIN
 	public static function search($login){
 		$sql = new Sql();
 		$result = $sql->select("SELECT * FROM tb_usuario WHERE deslogin LIKE :search" , array(':search' => '%' . $login . '%'));
 		return $result ;
 	}
-
+	//VALIDA LOGIN E SENHA
 	public function login($login,$pass){
 		$sql = new Sql();
 		$result = $sql->select("SELECT * FROM tb_usuario WHERE deslogin = :log AND dessenha = :sen" , array(
@@ -66,7 +67,7 @@ class Usuario{
 			
 		}
 	}
-
+	//INSERE NOVO USUARIO
 	public function insert(){
 
 		$sql = new Sql();
@@ -91,7 +92,7 @@ class Usuario{
 		}
 	}
 
-
+	//FAZ A ATUALIZAÇÃO
 	public function update($login , $password){
 
 		$this->setLogin($login);
@@ -103,6 +104,18 @@ class Usuario{
 			':id' => $this->getId()
 		));
 
+	}
+	//DELETA USUARIO
+	public function delete(){
+		$sql = new Sql();
+		$sql->query("DELETE FROM tb_usuario WHERE id_user = :id" , array(
+			':id' => $this->getId()
+		));
+
+		$this->setId(null);
+		$this->setLogin('');
+		$this->setSenha('');
+		$this->setDate(new DateTime());
 	}
 
 

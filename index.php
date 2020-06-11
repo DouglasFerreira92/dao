@@ -9,8 +9,8 @@ echo $user ;
 
 $user = new Usuario();
 
-$user->loadById('5');
+$user->loadById('6');
 
-$user->update("natasha" , "5349234");
+$user->delete();
 
-echo $user ;
+echo $user;

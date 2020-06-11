@@ -1,12 +1,10 @@
 <?php
-
 class Usuario{
 
 	private $id_user;
 	private $deslogin;
 	private $dessenha;
 	private $dtcastro;
-
 
 	public function loadById($id){
 
@@ -19,7 +17,38 @@ class Usuario{
 			$this->setId($linha['id_user']);
 			$this->setLogin($linha['deslogin']);
 			$this->setSenha($linha['dessenha']);
-			$this->setDate(new DateTime(($linha['dtcastro']));
+			$this->setDate(new DateTime($linha['dtcastro']));  
+		}
+	}
+
+	public static function getList(){
+		$sql = new Sql();
+		return $result = $sql->select("SELECT * FROM tb_usuario ORDER BY deslogin");
+	}
+
+	public static function search($login){
+		$sql = new Sql();
+		$result = $sql->select("SELECT * FROM tb_usuario WHERE deslogin LIKE :search" , array(':search' => '%' . $login . '%'));
+		return $result ;
+	}
+
+	public function login($login,$pass){
+		$sql = new Sql();
+		$result = $sql->select("SELECT * FROM tb_usuario WHERE deslogin = :log AND dessenha = :sen" , array(
+			':log' => $login ,
+			':sen' => $pass
+		));
+
+
+		if(count($result) > 0){
+			$linha = $result[0];
+			$this->setId($linha['id_user']);
+			$this->setLogin($linha['deslogin']);
+			$this->setSenha($linha['dessenha']);
+			$this->setDate(new DateTime($linha['dtcastro']));
+		}else{
+			throw new Exception("Usuário não encontrado", 1);
+			
 		}
 	}
 
@@ -29,7 +58,7 @@ class Usuario{
 			'ID'=> $this->getId(),
 			'LOGIN' => $this->getLogin(),
 			'SENHA' => $this->getSenha(),
-			'DATA CADASTRO' => $this->getDate()
+			'DATA CADASTRO' => $this->getDate()->format("d/m/Y")
 		));
 
 	}

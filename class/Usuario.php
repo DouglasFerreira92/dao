@@ -6,18 +6,36 @@ class Usuario{
 	private $dessenha;
 	private $dtcastro;
 
+	public function __construct($login = "" , $pass = ""){
+		$this->setLogin($login);
+		$this->setSenha($pass);
+	}
+
+	public function __toString(){
+
+		return json_encode(array(
+			'ID'=> $this->getId(),
+			'LOGIN' => $this->getLogin(),
+			'SENHA' => $this->getSenha(),
+			'DATA CADASTRO' => $this->getDate()->format("d/m/Y")
+		));
+
+	}
+
+	public function setData($data){
+		$this->setId($data['id_user']);
+		$this->setLogin($data['deslogin']);
+		$this->setSenha($data['dessenha']);
+		$this->setDate(new DateTime($data['dtcastro']));
+	}
+
 	public function loadById($id){
 
 		$sql = new Sql();
 		$result = $sql->select("SELECT * FROM tb_usuario WHERE id_user = :ID" , array(':ID' => $id));
 
 		if(count($result) > 0){
-
-			$linha = $result[0];
-			$this->setId($linha['id_user']);
-			$this->setLogin($linha['deslogin']);
-			$this->setSenha($linha['dessenha']);
-			$this->setDate(new DateTime($linha['dtcastro']));  
+			$this->setData($result[0]);
 		}
 	}
 
@@ -41,27 +59,52 @@ class Usuario{
 
 
 		if(count($result) > 0){
-			$linha = $result[0];
-			$this->setId($linha['id_user']);
-			$this->setLogin($linha['deslogin']);
-			$this->setSenha($linha['dessenha']);
-			$this->setDate(new DateTime($linha['dtcastro']));
+		$this->setData($result[0]);
+			
 		}else{
 			throw new Exception("Usuário não encontrado", 1);
 			
 		}
 	}
 
-	public function __toString(){
+	public function insert(){
 
-		return json_encode(array(
-			'ID'=> $this->getId(),
-			'LOGIN' => $this->getLogin(),
-			'SENHA' => $this->getSenha(),
-			'DATA CADASTRO' => $this->getDate()->format("d/m/Y")
+		$sql = new Sql();
+		switch(Conexao::$nome_banco){
+
+			case 'MYSQL':
+				$result = $sql->select("CALL sp_usuarios_insert(:log , :pass)" , array(
+				':log'=>$this->getLogin(),
+				':pass'=>$this->getSenha()
+				));
+			break;
+			case 'SQLSERVER':
+				$result = $sql->select("EXECUTE sp_usuarios_insert(:log , :pass)" , array(
+				':log'=>$this->getLogin(),
+				':pass'=>$this->getSenha()
+				));
+			break;
+		}
+
+		if(count($result) > 0){
+			$this->setData($result[0]);
+		}
+	}
+
+
+	public function update($login , $password){
+
+		$this->setLogin($login);
+		$this->setSenha($password);
+		$sql = new Sql();
+		$sql->query("UPDATE tb_usuario SET deslogin = :log , dessenha = :pass WHERE id_user = :id" , array(
+			':log'=> $this->getLogin(),
+			':pass'=> $this->getSenha(),
+			':id' => $this->getId()
 		));
 
 	}
+
 
 //========================GETTER E SETTER====================================
 

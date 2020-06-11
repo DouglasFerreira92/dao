@@ -2,6 +2,7 @@
 class Conexao extends PDO{
 
 	private static $instance;
+	public static $nome_banco = "MYSQL" ;
 	private const  DB_NAME = 'db_php' ;
 	private const  DB_HOST = 'localhost';
 	private const  DB_USER = 'root';

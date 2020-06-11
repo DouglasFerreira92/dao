@@ -1,8 +1,16 @@
 <?php
 require_once("config/config.php");
 
+/*
+$user = new Usuario("joaodecarvalhoneto","joao123");
+$user->insert();
+echo $user ;
+*/
 
 $user = new Usuario();
-$user->login('DouglasFerreira92' , '123456');
+
+$user->loadById('5');
+
+$user->update("natasha" , "5349234");
 
 echo $user ;
